@@ -20,6 +20,7 @@ library(codebook) ##Generates a codebook that describes the variables in a datas
 library(naniar)##Provides tools for working with missing data, such as identifying missing values, visualizing patterns of missingness, and imputing missing values.
 library(future)##Provides a framework for parallel and asynchronous programming in R, allowing you to execute code on multiple cores or even remote machines.
 library(Hmisc) ##Contains various functions for data analysis and modeling in R, including tools for imputation, regression, and survival analysis.
+library(scales)
 print("packages loaded into enviornment successfully")
 
 
@@ -118,15 +119,15 @@ print("duplicate check successful")
 sum(Xyearbikes[duplicated(Xyearbikes), ]) 
 print("duplicate count successful")
 
-# summarize new data frame 
-summary(RMXyearbikes)
-## The mean ride start time is 14:07:47, indicating that most rides happen during daytime.
-## The median ride start time is on 7/20/2022 at 21:24:09, indicating that there are more rides happening during the summer season.
 
 ## remove duplicate values
 RMXyearbikes <<- distinct(RMXyearbikes)
 print("duplicate removal successful")
 
+# summarize new data frame 
+summary(RMXyearbikes)
+## The mean ride start time is 14:07:47, indicating that most rides happen during daytime.
+## The median ride start time is on 7/20/2022 at 21:24:09, indicating that there are more rides happening during the summer season.
 
 ## return a table of counts for each unique value
 table(RMXyearbikes$member_casual)
@@ -191,15 +192,6 @@ RMXyearbikes_v2$day_of_week <- ordered(RMXyearbikes_v2$day_of_week, levels=c("Su
 ## Run the average ride time by each day for members vs casual users
 aggregate(RMXyearbikes_v2$ride_length ~ RMXyearbikes_v2$member_casual + RMXyearbikes_v2$day_of_week, FUN = mean)
 
-## analyze ridership data by user type and weekday
-RMXyearbikes_v2 %>%
-  mutate(weekday = wday(started_at, label = TRUE)) %>%
-  group_by(member_casual, weekday) %>%  
-  summarise(number_of_rides = n(),
-            average_duration = mean(ride_length)) %>%
-  arrange(member_casual, weekday)
-
-
 
 ## Identify most popular end station
 RMXyearbikes_v2 %>% 
@@ -218,6 +210,8 @@ RMXyearbikes_v2 %>%
 ## 1 casual        classic_bike   888728
 ## 2 member        classic_bike  1708573
 
+
+### VISUALIZE 
 
 ## visualize the number of rides by rider type by weekday
 RMXyearbikes_v2 %>%
@@ -264,6 +258,21 @@ RMXyearbikes_v2 %>%
   ggplot(aes(x = month, y = average_duration, fill = member_casual)) +
   geom_col(position = "dodge")
 
+# Plot for most popular bike
+df <- RMXyearbikes %>%
+  count(rideable_type, member_casual) %>%
+ggplot(df, aes(x = member_casual, y = rideable_type, fill = n)) +
+  geom_tile() +
+  scale_fill_gradientn(colors = c("#E5F5E0", "#A1D99B", "#31A354")) + # Change the color palette to shades of green
+  labs(title = "Bike Usage by Member Type",
+       x = "Member Type",
+       y = "Bike Type",
+       fill = "Count")
+
+
+
+
+
 
 # EXPORT SUMMARY FILE FOR FURTHER ANALYSIS
 counts <- aggregate(RMXyearbikes_v2$ride_length ~ RMXyearbikes_v2$member_casual + RMXyearbikes_v2$day_of_week, FUN = mean)
@@ -286,12 +295,11 @@ The conclusion in the analysis is that while both type of Cyclistic users prefer
 
 
 
-# RECOMMENDATIONS
-### How can we engage the casual riders to convert to members?
-1.)Implement a rewards program leveraging popular bike types, like the **classic** for members who ride frequently, & providing additional incentives for them to continue using the service and potentially refer new members. 
-2.) Offer promotions or discounts for casual riders who sign up for a membership during the summer months, when bike usage is highest.
-3.) Create partnerships with local businesses or attractions near popular end stations to offer exclusive discounts or deals to members, encouraging them to ride to these locations.
-
+# RECCOMMENDATIONS 
+To engage casual riders and convert them to members, the following strategies can be implemented:
+1.) Introduce a rewards program that offers incentives to members who ride frequently and use popular bike types, like the classic bike.
+2.) Offer promotions or discounts to casual riders who sign up for a membership during the summer months when bike usage is highest.
+3.) Establish partnerships with local businesses or attractions near popular end stations to offer exclusive deals or discounts to members, encouraging them to ride to these locations.
 
 
 # THANK YOU FOR YOUR TIME
