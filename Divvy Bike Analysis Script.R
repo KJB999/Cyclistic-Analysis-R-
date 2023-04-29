@@ -20,7 +20,7 @@ library(codebook) ##Generates a codebook that describes the variables in a datas
 library(naniar)##Provides tools for working with missing data, such as identifying missing values, visualizing patterns of missingness, and imputing missing values.
 library(future)##Provides a framework for parallel and asynchronous programming in R, allowing you to execute code on multiple cores or even remote machines.
 library(Hmisc) ##Contains various functions for data analysis and modeling in R, including tools for imputation, regression, and survival analysis.
-library(scales)
+library(scales) ##Provides graphical scales for axes and legends, including color scales, date scales, and log scales.
 print("packages loaded into enviornment successfully")
 
 
@@ -52,7 +52,7 @@ View(X2209)
 View(X2210)
 View(X2211)
 View(X2212)
-
+print("files opened in R successfully")
 
 ## Inspect the column names 
 colnames(X2201)
@@ -90,7 +90,7 @@ Xyearbikes <- rbind(X2201, X2202, X2203, X2204, X2205, X2206, X2207, X2208, X220
 View(Xyearbikes)
 print("Data sets successfully combined")
 
-## Remove columns not conducive to the business objective (lat and long)
+## Remove columns not conducive to the business objective (lat and long columns)
 Xyearbikes <- Xyearbikes[, !(names(Xyearbikes) %in% c("start_lat", "start_lng", "end_lat", "end_lng"))]
 print("columns removed successfully")
 
@@ -110,7 +110,7 @@ n_miss(RMXyearbikes) ##0
 print("null value removal successful")
 
 
-## identify # of duplicates in a DF
+## identify # of duplicates in a DF for each variable
 XRMXyearbikesdupes <- RMXyearbikes[duplicated(RMXyearbikes), ]
 print("duplicate check successful")
 
